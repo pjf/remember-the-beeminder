@@ -2,7 +2,7 @@
 use 5.10.1;
 use strict;
 use warnings;
-use autodie;
+use autodie qw(:all);
 
 use RTBM;
 use DateTime;
@@ -12,17 +12,16 @@ my $rtbm = RTBM->new;
 
 # say $rtbm->get_auth_url;          # Only needed for first auth
 
+# Get our inbox tasks, and count them.
+
 my $inbox_tasks = $rtbm->get_inbox;
-
-use Data::Dumper;
-say Dumper $inbox_tasks;
-
 my $num_tasks = @$inbox_tasks;
 
-say "$num_tasks in inbox";
+say "Number of tasks is $num_tasks";
+
+# Calculate the max age of our tasks.
 
 my $now = DateTime->now;;
-
 my $max_age = 0;
 
 foreach my $task (@$inbox_tasks) {
@@ -40,3 +39,13 @@ foreach my $task (@$inbox_tasks) {
 }
 
 say "Maximum age is $max_age";
+
+# The Beeminder API is currently alpha, so we instead make a call-out
+# to my shim that hooks into it.
+
+say "Submitting data points to beeminder";
+
+system('bmndr','rtm_inbox_size',$num_tasks, "auto: rtbm");
+system('bmndr','rtm_inbox_age', $max_age,   "auto: rtbm");
+
+say "Done";
