@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+use 5.10.1;
+use strict;
+use warnings;
+use autodie;
+
+use RTBM;
+
+my $rtmb = RTBM->new;
+
+# say $rtmb->get_auth_url;
+
+my $inbox = $rtmb->find_list('Inbox');
+
+use Data::Dumper;
+say Dumper $inbox;
