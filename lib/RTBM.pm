@@ -45,4 +45,13 @@ method find_list (Str $listname) {
     croak "$listname not found";
 }
 
+method get_inbox {
+    my $inbox_id = $self->find_list('Inbox')->{id};
+
+    my $tasks = $self->tasks_getList("list_id=$inbox_id", 'filter=status:incomplete');
+
+    # Unpacking again...
+    return $tasks->{tasks}[0]{list}[0]{taskseries};
+}
+
 1;

@@ -5,12 +5,38 @@ use warnings;
 use autodie;
 
 use RTBM;
+use DateTime;
+use DateTime::Format::Flexible;     # Overkill, but who cares?
 
-my $rtmb = RTBM->new;
+my $rtbm = RTBM->new;
 
-# say $rtmb->get_auth_url;
+# say $rtbm->get_auth_url;          # Only needed for first auth
 
-my $inbox = $rtmb->find_list('Inbox');
+my $inbox_tasks = $rtbm->get_inbox;
 
 use Data::Dumper;
-say Dumper $inbox;
+say Dumper $inbox_tasks;
+
+my $num_tasks = @$inbox_tasks;
+
+say "$num_tasks in inbox";
+
+my $now = DateTime->now;;
+
+my $max_age = 0;
+
+foreach my $task (@$inbox_tasks) {
+    my $created_date = DateTime::Format::Flexible->parse_datetime(
+        $task->{created}
+    );
+
+    my $delta = $now->delta_days($created_date);
+
+    my $days_old = $delta->days;
+
+    if ($days_old > $max_age) {
+        $max_age = $days_old
+    }
+}
+
+say "Maximum age is $max_age";
