@@ -35,6 +35,22 @@ method lists {
     return $lists->{lists}[0]{list};
 }
 
+method lists_by_id {
+    state $lists_by_id;
+
+    # Return lists if already cached.
+    return $lists_by_id if $lists_by_id;
+
+    # Otherwise build hash.
+    my $lists = $self->lists;
+
+    foreach my $list (@$lists) {
+        $lists_by_id->{ $list->{id} } = $list->{name};
+    }
+
+    return $lists_by_id;
+}
+
 method find_list (Str $listname) {
     my $lists = $self->lists;
 
@@ -52,6 +68,13 @@ method get_inbox {
 
     # Unpacking again...
     return $tasks->{tasks}[0]{list}[0]{taskseries};
+}
+
+# Date can be 'today', 'yesterday', etc.
+method get_done (Str $date) {
+    my $done = $self->tasks_getList("filter=completed:$date");
+
+    return $done->{tasks}[0]{list};
 }
 
 1;
