@@ -25,13 +25,14 @@ my $now = DateTime->now;;
 my $max_age = 0;
 
 foreach my $task (@$inbox_tasks) {
+
     my $created_date = DateTime::Format::Flexible->parse_datetime(
         $task->{created}
     );
 
     my $delta = $now->delta_days($created_date);
 
-    my $days_old = $delta->days;
+    my ($days_old) = $delta->in_units('days');
 
     if ($days_old > $max_age) {
         $max_age = $days_old
