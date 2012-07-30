@@ -15,6 +15,7 @@ my $rtbm = RTBM->new;
 # Get our inbox tasks, and count them.
 
 my $inbox_tasks = $rtbm->get_inbox;
+$inbox_tasks ||= [];                    # Inbox zero returns undef.
 my $num_tasks = @$inbox_tasks;
 
 say "Number of tasks is $num_tasks";
