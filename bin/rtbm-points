@@ -42,10 +42,11 @@ foreach my $list (@$done_lists) {
     }
 }
 
-say "TOTAL POINTS = $total_points\n";
+say "\nTOTAL POINTS = $total_points\n";
 
-# system('bmndr','rtm_inbox_size',$num_tasks, "auto: rtbm");
-# system('bmndr','rtm_inbox_age', $max_age,   "auto: rtbm");
+if ($total_points) {
+    system('bmndr','rtm_points',$total_points, "auto: rtbm");
+}
 
 # Tasks are done?  Mark them so.
 
