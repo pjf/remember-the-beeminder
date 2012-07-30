@@ -6,7 +6,8 @@ My own personal tools for integrating RTM and Beeminder.
 When running the code, you might find that unless you have RTBM.pm
 installed where perl can find it, you'll instead want to use:
 
-    perl -Ilib bin/rtbm-inbox-reporter
+    perl -Ilib bin/rtbm-inbox-reporter       # Report my stats to beeminder
+    perl -Ilib bin/rtbm-inbox-show-staleness # Show inbox tasks by age
 
 You'll also need a ~/.rtbmrc file with your RTM API credentials
 that looks like this:
