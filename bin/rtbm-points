@@ -16,18 +16,23 @@ use Data::Dumper;
 
 my $name_of = $rtbm->lists_by_id;   # Maps ID to List name
 
+my $total_points = 0;
+
 foreach my $list (@$done_lists) {
     my $id = $list->{id};
-    my $name = $name_of->{$id};
+    my $list_name = $name_of->{$id};
 
-    say "=== $name ===";
+    say "=== $list_name ===";
 
     foreach my $task (@{ $list->{taskseries} }) {
-        my $tags = $task->{tags}[0]{tag} || [];
-        say "[$task->{id}] $task->{name} [ @$tags ]";
-    }
+        my $score = $rtbm->score($task, $list_name);
+        say "[$task->{id}] $task->{name} [ $score ]";
 
+        $total_points += $score;
+    }
 }
+
+say "TOTAL POINTS = $total_points\n";
 
 # system('bmndr','rtm_inbox_size',$num_tasks, "auto: rtbm");
 # system('bmndr','rtm_inbox_age', $max_age,   "auto: rtbm");
