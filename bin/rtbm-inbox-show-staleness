@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+use 5.10.1;
+use strict;
+use warnings;
+use autodie qw(:all);
+
+# Simple code to show items in RTM and how long each has been in my
+# inbox.
+
+use RTBM;
+use DateTime;
+use DateTime::Format::Flexible;     # Overkill, but who cares?
+
+my $rtbm = RTBM->new;
+
+# Get our inbox tasks
+my $inbox_tasks = $rtbm->get_inbox;
+
+# Calculate the max age of our tasks.
+
+my $now = DateTime->now;;
+my $max_age = 0;
+
+my @task_index;
+
+foreach my $task (@$inbox_tasks) {
+
+    my $created_date = DateTime::Format::Flexible->parse_datetime(
+        $task->{created}
+    );
+
+    my $delta = $now->delta_days($created_date);
+
+    my ($days_old) = $delta->in_units('days');
+
+    push(@{ $task_index[$days_old] }, $task->{name});
+}
+
+# Print all our delicious tasks.  Oldest ones at the end, so if
+# we scroll they're easy to see.
+
+for (my $i = 0; $i < @task_index; $i++) {
+    foreach my $task (@{ $task_index[$i] }) {
+        printf "[%2d] %s\n", $i, $task ;
+    }
+}
