@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+use 5.10.1;
+use strict;
+use warnings;
+use autodie qw(:all);
+
+use RTBM;
+use DateTime;
+
+my $rtbm = RTBM->new;
+
+my $done_lists = $rtbm->get_done('today');
+
+use Data::Dumper;
+# say Dumper $done;
+
+my $name_of = $rtbm->lists_by_id;   # Maps ID to List name
+
+foreach my $list (@$done_lists) {
+    my $id = $list->{id};
+    my $name = $name_of->{$id};
+
+    say "=== $name ===";
+
+    foreach my $task (@{ $list->{taskseries} }) {
+        my $tags = $task->{tags}[0]{tag} || [];
+        say "[$task->{id}] $task->{name} [ @$tags ]";
+    }
+
+}
+
+# system('bmndr','rtm_inbox_size',$num_tasks, "auto: rtbm");
+# system('bmndr','rtm_inbox_age', $max_age,   "auto: rtbm");
+
+say "Done";
