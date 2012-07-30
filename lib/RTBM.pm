@@ -123,6 +123,9 @@ method score(HashRef $task, Str $list) {
     return $score;
 }
 
+# TODO: Rather than store this info locally, it would be *much*
+# better it was stored as tags or meta-data in RTM.
+
 method is_done(HashRef $task) {
     return $self->_done_tasks->{ $task->{id} };
 }
