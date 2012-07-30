@@ -18,6 +18,8 @@ my $name_of = $rtbm->lists_by_id;   # Maps ID to List name
 
 my $total_points = 0;
 
+my @done_tasks;
+
 foreach my $list (@$done_lists) {
     my $id = $list->{id};
     my $list_name = $name_of->{$id};
@@ -25,8 +27,16 @@ foreach my $list (@$done_lists) {
     say "=== $list_name ===";
 
     foreach my $task (@{ $list->{taskseries} }) {
+
+        if ($rtbm->is_done( $task ) ) {
+            say "[DONE] $task->{name}";
+            next;
+        }
+
         my $score = $rtbm->score($task, $list_name);
-        say "[$task->{id}] $task->{name} [ $score ]";
+        say "[ $score ] $task->{name}";
+
+        push(@done_tasks, $task);
 
         $total_points += $score;
     }
@@ -36,5 +46,9 @@ say "TOTAL POINTS = $total_points\n";
 
 # system('bmndr','rtm_inbox_size',$num_tasks, "auto: rtbm");
 # system('bmndr','rtm_inbox_age', $max_age,   "auto: rtbm");
+
+# Tasks are done?  Mark them so.
+
+$rtbm->mark_done(\@done_tasks);
 
 say "Done";

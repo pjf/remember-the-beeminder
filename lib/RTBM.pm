@@ -8,17 +8,29 @@ use MooseX::NonMoose;
 use MooseX::Method::Signatures;
 use Config::Tiny;
 use Carp;
+use AnyDBM_File;
+use POSIX qw(O_CREAT O_RDWR);
 
 extends 'WebService::RTMAgent';
 
 # Shouldn't really be rw, but I'm lazy and this lets me set it
 # in BUILD.
-has '_config' => (is => 'rw', isa => 'Config::Tiny');
+has '_config'     => (is => 'rw', isa => 'Config::Tiny');
+has '_done_tasks' => (is => 'rw', isa => 'HashRef'); # Really a tied hash
 
 # After we build our object, auto-init with RTM.
 
 sub BUILD {
     my ($self) = @_;
+
+    my %done_tasks;
+
+    # NB, locking might be good here.
+    # TODO: Error-checking. What if this fails to open?
+    tie %done_tasks, 'AnyDBM_File', "$ENV{HOME}/.rtbmdone", O_CREAT|O_RDWR, 0666;
+
+    # Save DBM hash for later.
+    $self->_done_tasks(\%done_tasks);
 
     my $config = Config::Tiny->read("$ENV{HOME}/.rtbmrc");
     $config or die "Can't read ~/.rtbmrc config file";
@@ -109,7 +121,19 @@ method score(HashRef $task, Str $list) {
     $score = $tag_score // $score;  # Take tag score if it was found
 
     return $score;
+}
 
+method is_done(HashRef $task) {
+    return $self->_done_tasks->{ $task->{id} };
+}
+
+# Take an array of tasks and mark them as done. :)
+
+method mark_done(ArrayRef[HashRef] $tasks) {
+    foreach my $task (@$tasks) {
+        $self->_done_tasks->{ $task->{id} } = 1;
+    }
+    return;
 }
 
 1;
