@@ -97,6 +97,13 @@ method get_done (Str $date) {
     return $done->{tasks}[0]{list};
 }
 
+# Eg: "1 week of today"
+method get_done_within (Str $filter) {
+    my $done = $self->tasks_getList(qq{filter=completedWithin:"$filter"});
+
+    return $done->{tasks}[0]{list};
+}
+
 # Given a task and its list, returns how many points it's worth
 method score(HashRef $task, Str $list) {
     state $scoring_table = $self->_config->{Scores};

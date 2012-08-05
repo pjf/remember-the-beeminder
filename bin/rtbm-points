@@ -9,7 +9,7 @@ use DateTime;
 
 my $rtbm = RTBM->new;
 
-my $done_lists = $rtbm->get_done('today');
+my $done_lists = $rtbm->get_done_within('4 day of today');
 
 use Data::Dumper;
 # say Dumper $done;
