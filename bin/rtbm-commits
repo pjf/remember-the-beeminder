@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+use 5.10.1;
+use strict;
+use warnings;
+use autodie qw(:all);
+
+use WWW::Mechanize;
+use JSON::Any;
+
+# Simplest of code to suck the number of commits made to the RTBM system
+# by yours truly from github, and push the results to beeminder.
+
+my $mech = WWW::Mechanize->new;
+my $json = JSON::Any->new;
+
+my $RTBM_URL = "https://api.github.com/repos/pfenwick/remember-the-beeminder/contributors";
+my $RTBM_USER = "pfenwick";
+
+$mech->get($RTBM_URL);
+
+my $commits = $json->decode($mech->content);
+
+my $contribs = [ grep { $_->{login} eq $RTBM_USER } @$commits ]->[0]->{contributions};
+
+system('bmndr','rtbm-commits',$contribs, "auto: rtbm");
