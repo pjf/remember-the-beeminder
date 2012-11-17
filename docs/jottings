@@ -3,3 +3,9 @@
 Have a number of 'data source' classes.  Each takes an underlying
 data source (fitocracy, beeminder, RTM, comic-rocket, etc) and translates
 it into a general format to which scores can be applied to.
+
+=head1 Discussion on Facebook
+
+https://www.facebook.com/paul.fenwick/posts/10151164187724611
+
+
