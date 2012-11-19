@@ -1,8 +1,51 @@
 =head1 Possible architecture
 
+=head2 Sources
+
 Have a number of 'data source' classes.  Each takes an underlying
 data source (fitocracy, beeminder, RTM, comic-rocket, etc) and translates
-it into a general format to which scores can be applied to.
+data into a tagged stream.  Eg:
+
+    {
+        source      => 'RememberTheMilk',
+        description => 'Laundry',
+        tags        => ['household','chores'],
+        date        => 1353283428,
+    }
+
+TODO: Some things (like RTM) have concepts of tags and lists.  Do
+we split these? Do we keep them together? Do we have some sort of
+extensible format?
+
+=head3 Possible sources
+
+ * RememberTheMilk
+ * Beeminder
+ * Fitocracy
+ * Foursquare
+ * iDoneThis
+
+=head2 Classifier
+
+The classifier takes each item from each stream, and converts it into
+a point value.  It has a rule-set (read from a user-defined configuration
+file) on how this is to be done.
+
+=head2 Streak Engine
+
+The streak engine takes the results from the classifier, and scales
+points according to streaks. This allows for diminishing returns, but
+also allows for bonuses to be awarded for streaks.  For example,
+flossing one's teeth may be worth one point the first day, two the second,
+up to a maximum of five.  This strongly encourages habitual behaviour
+as one doesn't wish to break the streak.
+
+=head2 Logging engine (optional)
+
+It would be nice to collate all the information we've got and place it
+into logs, draw graphs, or otherwise make it accessible for future use.
+This may be used by the previous stages (eg, to detect streaks) and is
+generally just good self-quantification.
 
 =head1 Discussion on Facebook
 
