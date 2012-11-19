@@ -24,6 +24,8 @@ extensible format?
  * Fitocracy
  * Foursquare
  * iDoneThis
+ * Email (both inbox size and emails sent)
+ * github
 
 =head3 Notes
 
