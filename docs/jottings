@@ -25,6 +25,17 @@ extensible format?
  * Foursquare
  * iDoneThis
 
+=head3 Notes
+
+The classifier may be run on a regular schedule (eg, a cron job), or
+we may establish callbacks from other services when changes are made
+(eg, post-commit hooks in git, or push URLs in beeminder).
+
+This means at the very least we need some sort of (web) service
+to accept these. This should be pretty easy with Dancer, but we'll
+need to make sure we've got some sort of strong auth going and
+protection against DOS attacks/malfunctions.
+
 =head2 Classifier
 
 The classifier takes each item from each stream, and converts it into
