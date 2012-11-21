@@ -1,0 +1,8 @@
+IPC::System::Simple
+Moose
+MooseX::NonMoose
+MooseX::Method::Signatures
+WWW::Mechanize
+JSON::Any
+WebService::RTMAgent
+DateTime::Format::Flexible
