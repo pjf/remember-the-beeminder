@@ -7,6 +7,8 @@ use WWW::Mechanize;
 use Config::Tiny;
 use JSON::Any;
 use AnyDBM_File;
+use WebService::Beeminder;
+use File::Slurp qw(read_file);
 use POSIX qw(O_CREAT O_RDWR);
 
 use constant DANCE_STUDIO => "First Floor 393";
@@ -18,6 +20,10 @@ my $BASE   = 'https://api.foursquare.com/v2';
 
 my $mech = WWW::Mechanize->new();
 my $json = JSON::Any->new;
+
+my $bee = WebService::Beeminder->new(
+    token => read_file("$ENV{HOME}/.webservice-beeminder.token"),
+);
 
 my %seen;
 tie %seen, 'AnyDBM_File', "$ENV{HOME}/.beesquare.seen", O_CREAT|O_RDWR, 0666;
@@ -35,11 +41,13 @@ foreach my $checkin (@$checkins) {
 
     # TODO: These should all be in a config file, but my tram
     # ride is about to end.
-    #
-    # TODO: Submit points via WebService::Beeminder
-    #
+
     if ($checkin->{venue}{name} eq DANCE_STUDIO) {
-        system('bmndr', 'dance', 1, 'auto: beesquare');
+        $bee->add_datapoint(
+            goal    => 'dance',
+            value   => 1,
+            comment => 'auto: beesquare'
+        );
         $seen{$checkin->{venue}{id}} = 1;
     }
 }
