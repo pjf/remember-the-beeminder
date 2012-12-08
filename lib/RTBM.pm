@@ -3,6 +3,8 @@ package RTBM;
 use v5.10.1;
 use warnings;
 
+# ABSTRACT: Shim between Beeminder and RememberTheMilk
+
 use Moose;
 use MooseX::NonMoose;
 use MooseX::Method::Signatures;
