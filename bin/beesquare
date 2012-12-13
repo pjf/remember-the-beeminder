@@ -11,7 +11,7 @@ use WebService::Beeminder;
 use POSIX qw(O_CREAT O_RDWR);
 
 use constant DANCE_STUDIO => "First Floor 393";
-use constant DEBUG => 0;
+use constant DEBUG => $ENV{DEBUG} || 0;
 
 my $config = Config::Tiny->read("$ENV{HOME}/.rtbmrc");
 my $TOKEN  = "oauth_token=$config->{FourSquare}{auth_token}&v=20121108";
@@ -36,17 +36,18 @@ foreach my $checkin (@$checkins) {
     say "$checkin->{id} $checkin->{venue}{name}" if DEBUG;
     
     # Skip entries we've already scored points for
-    next if $seen{$checkin->{venue}{id}};
+    next if $seen{$checkin->{id}};
 
     # TODO: These should all be in a config file, but my tram
     # ride is about to end.
 
     if ($checkin->{venue}{name} eq DANCE_STUDIO) {
+	say "Adding points for $checkin->{venue}{name}" if DEBUG;
         $bee->add_datapoint(
             goal    => 'dance',
             value   => 1,
             comment => 'auto: beesquare'
         );
-        $seen{$checkin->{venue}{id}} = 1;
+        $seen{$checkin->{id}} = 1;
     }
 }
