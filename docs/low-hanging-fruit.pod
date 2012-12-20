@@ -1,1 +1,4 @@
+* Create a subclass of WebService::Beeminder that automatically loads
+credentials, etc.
+
 * Look in Maildir folder to automatically pull email messages
