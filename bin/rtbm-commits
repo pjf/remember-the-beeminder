@@ -6,12 +6,14 @@ use autodie qw(:all);
 
 use WWW::Mechanize;
 use JSON::Any;
+use RTBM::Beeminder;
 
 # Simplest of code to suck the number of commits made to the RTBM system
 # by yours truly from github, and push the results to beeminder.
 
 my $mech = WWW::Mechanize->new;
 my $json = JSON::Any->new;
+my $bee  = RTBM::Beeminder->new;
 
 my $RTBM_URL = "https://api.github.com/repos/pfenwick/remember-the-beeminder/contributors";
 my $RTBM_USER = "pfenwick";
@@ -22,4 +24,10 @@ my $commits = $json->decode($mech->content);
 
 my $contribs = [ grep { $_->{login} eq $RTBM_USER } @$commits ]->[0]->{contributions};
 
-system('bmndr','rtbm-commits',$contribs, "auto: rtbm");
+# TODO: Only add a data point if different from previous data point.
+
+$bee->add_datapoint(
+    goal => 'rtbm-commits', 
+    value => $contribs,
+    comment => 'auto: rtbm',
+);
