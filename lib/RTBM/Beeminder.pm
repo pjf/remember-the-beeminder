@@ -5,6 +5,8 @@ use Config::Tiny;
 
 extends 'WebService::Beeminder';
 
+our $VERSION = $WebService::Beeminder::VERSION;
+
 my $config = Config::Tiny->read("$ENV{HOME}/.rtbmrc");
 $config or die "Can't read ~/.rtbmrc config file";
 
