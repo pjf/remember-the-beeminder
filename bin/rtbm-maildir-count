@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+use v5.10.0;
+use strict;
+use warnings;
+use autodie;
+
+my $inbox = "$ENV{HOME}/Maildir/cur";
+
+opendir(my $in_dir, $inbox);
+
+my $inbox_size = 0;
+
+while (my $file = readdir($in_dir)) {
+    $inbox_size++ if $file =~ /2,.*S/;	# Seen flag in filename
+}
+
+say "Inbox size is $inbox_size";
