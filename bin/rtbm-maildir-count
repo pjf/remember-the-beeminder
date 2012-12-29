@@ -8,10 +8,12 @@ my $inbox = "$ENV{HOME}/Maildir/cur";
 
 opendir(my $in_dir, $inbox);
 
-my $inbox_size = 0;
+my $read_size  = 0;
+my $total_size = 0;
 
 while (my $file = readdir($in_dir)) {
-    $inbox_size++ if $file =~ /2,.*S/;	# Seen flag in filename
+    $total_size++;
+    $read_size++ if $file =~ /2,.*S/;	# Seen flag in filename
 }
 
-say "Inbox size is $inbox_size";
+say "Inbox size is $read_size (read) of $total_size (total)";
