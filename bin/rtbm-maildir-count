@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+use v5.10.0;
+use strict;
+use warnings;
+use autodie;
+
+my $inbox = "$ENV{HOME}/Maildir/cur";
+
+opendir(my $in_dir, $inbox);
+
+my $read_size  = 0;
+my $total_size = 0;
+
+while (my $file = readdir($in_dir)) {
+    $total_size++;
+    $read_size++ if $file =~ /2,.*S/;	# Seen flag in filename
+}
+
+say "Inbox size is $read_size (read) of $total_size (total)";
