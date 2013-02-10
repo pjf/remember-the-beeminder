@@ -1,0 +1,55 @@
+#!/usr/bin/perl -w
+use 5.010;
+use strict;
+use warnings;
+use autodie;
+
+use WebService::Idonethis;
+use Config::Tiny;
+use POSIX qw(tzset strftime);
+
+use constant ONE_WEEK   => 7   * 86400;
+use constant ONE_MONTH  => 30  * 86400;     # It's about a month...
+use constant SIX_MONTHS => 365 * 86400 / 2; # About six months...
+use constant ONE_YEAR   => 365 * 86400;     # TODO: Leapyears
+
+$ENV{TZ} = "Australia/Melbourne";      # I'm usually here.
+tzset();
+
+my $config = Config::Tiny->read( "$ENV{HOME}/.idonethisrc" );
+
+my $idt = WebService::Idonethis->new(
+    user => $config->{auth}{user},
+    pass => $config->{auth}{pass},
+);
+
+send_memories($idt);
+
+sub send_memories {
+    my ($idt) = @_;
+
+    my $now = time;
+
+    foreach my $timeframe (ONE_YEAR, SIX_MONTHS, ONE_MONTH, ONE_WEEK) {
+
+        my $then = $now - $timeframe;
+
+        my $date = strftime("%Y-%m-%d", localtime($then));
+
+        my $dones = $idt->get_day($date);
+
+        if ($dones->[0]) {
+
+            say "Here's what you were doing on $date:\n";
+
+            foreach my $item (@$dones) {
+                say "* $item->{text}";
+            }
+
+            return;
+        }
+    }
+
+    say "I have no idea what you were doing. (Probably a bug.)";
+
+}
